@@ -1,0 +1,32 @@
+{
+  "name": "eslint-processor-rules",
+  "version": "1.0.0",
+  "description": "helper for defining custom rules in my eslint fork",
+  "keywords": [
+    "eslint"
+  ],
+  "author": "uwx",
+  "main": "index.js",
+  "scripts": {
+    "test": "exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/uwx/eslint-processor-rules"
+  },
+  "bugs": {
+    "url": "https://github.com/uwx/eslint-processor-rules/issues"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "eslint": "~1.2.0",
+    "mocha": "^2.3.4"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "url": "https://github.com/uwx/eslint-processor-rules",
+  "license": "ISC"
+}
