@@ -1,18 +1,37 @@
 // see https://github.com/uwx/eslint
+/**
+ * Usage:
+ * <outer scope> var settings;
+ * <preprocess function> settings = new Settings(config, '<plugin name, like css or json>');
+ * <postprocess function> messages.filter(settings.isEnabled).concat(settings.getBadRules());
+ */
 class Settings {
+  /**
+   * config: eslint config object (argument 3), blank is valid
+   * name: plugin name (not including the 'eslint-plugin-' part)
+   */
   constructor(config, name) {
-    if (config) {
-      this.settings = config.settings.css;
+    // automatically detect if no settings provided or not using my eslint fork
+    if (config && config.settings && config.settings[name]) {
+      this.settings = config.settings[name];
+      
+      // no need to create these otherwise since it will fast track
+      this.badRules = [];
+      this.name = name;
     }
   }
-  get(ruleId, badRules, default) { // fallback = type == 'error' ? 2 : 1;
+  /**
+   * ruleId: eslint config rule id (not including prefix)
+   * def: fallback default rule setting (1 or 2 but not 0)
+   */
+  get(ruleId, def) {
     if (!this.settings) {
-        return default;
+        return def;
     }
     var setting = this.settings[ruleId];
     // unset, use default
     if (setting === undefined) { // will never be null in a reasonable case so undefined is ok
-        return default;
+        return def;
     }
     // manually disabled
     if (setting === 0 || setting == 'off') {
@@ -28,15 +47,22 @@ class Settings {
     }
     
     // no return, must have bad property value
-    badRules.push({
+    this.badRules.push({
         ruleId: 'bad-css-rule-' + ruleId,
         severity: 2,
-        message: 'Invalid CSSLint rule setting "' + setting + '" for "css/' + ruleId + '", must be one of 0/1/2/off/warn/error',
+        message: `Invalid custom rule setting "${setting}" for "${this.name}/${ruleId}", must be one of 0/1/2/off/warn/error`,
         source: '<none>',
         line: 1,
-        column: badRules.length,
+        column: this.badRules.length,
     });
-    return default;
+    return def;
   }
-
+  getBadRules() {
+    const v = this.badRules;
+    delete this.badRules;
+    return v;
+  }
+  isEnabled(e) {
+    return e.severity !== null;
+  }
 }
