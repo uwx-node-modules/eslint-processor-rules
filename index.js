@@ -66,3 +66,5 @@ class Settings {
     return e.severity !== null;
   }
 }
+
+module.exports = Settings;
